@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         stopThread = true;
     }
 
+    //1. Extending the thread class
     class ExampleThread extends Thread{
         int seconds;
 
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //2. implementing the runnable interface
+    // this process is preferable instead of extendign the thread
+    //class. we just need a work to execute.
     class ExampleRunnable implements Runnable{
         int seconds;
 
@@ -91,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
 
                 /*
                 //App will crash if we are not using this inside a handler
+                // because we cannot communicate UI thread without a handler.
+                //handler communicates between threads.
+                //our action is in exampleThread and our button buttonStartThread
+                // is in UI Thread. so two different threads. so wen need handler
+                //to communicate.
                 if (i == 5){
                     buttonStartThread.setText("50%");
                 }*/
@@ -117,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 
                 //case III: works fine
+                //now handler is associated with the looper of the ui thread with passing Looper.getMainLooper()
+                //instead of case III you can do it by case IV
                 /*Handler threadHandler = new Handler(Looper.getMainLooper());
                 if (i == 5){
                     threadHandler.post(new Runnable() {
@@ -128,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 
                 //case IV: works fine
+                //
                 /*if (i == 5){
                     buttonStartThread.post(new Runnable() {
                         @Override
@@ -138,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 
                 //case V: works fine
+                //runOnUiThread is a activity method
                 if (i == 5){
                     runOnUiThread(new Runnable() {
                         @Override
@@ -156,3 +170,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+/*
+There are two way of starting the background thread:
+1. Extending the Thread class and override the run method
+or
+2. Implementing the runnable interface and passing this runnable
+ object to a new thread.
+
+ Handler and Looper: those make running these thread and
+ communicates between different threads more convenient.
+
+
+Asynctask, HandlerThread, ThreadPoolExecutor are the heigher
+extraction classes. will discuss later.
+
+
+HOW HANDLER WORKS?-Later
+
+SOMETHING ABOUT UI THREAD:
+After app started the ui thread just not terminated even if it does not have any work to do. instead it wait for new input like click a button
+and do something or perform any other works. The mechanism which keeps alive the ui thread is called Message Queue. Intead just one piece of
+works it has whole lot of work to execute. one after another. Then there something called looper which loops through the message queue. and dispatches
+messages sequencially. and this is literally a infinite for loop. and unless we create a purpose we dont leave this loop. There something called
+handler which is responsible for    getting the messages of works into the message queue and it is used to get work from background thread to main
+thread.
+
+ */
